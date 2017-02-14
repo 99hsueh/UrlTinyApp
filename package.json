@@ -2,8 +2,9 @@
   "name": "tinyapp",
   "version": "1.0.0",
   "description": "url shortener",
-  "main": "index.js",
+  "main": "express_server.js",
   "dependencies": {
+    "ejs": "^2.5.5",
     "express": "^4.14.1"
   },
   "devDependencies": {},
