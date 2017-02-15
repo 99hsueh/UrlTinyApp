@@ -110,6 +110,12 @@ app.post("/login", (req, res) => {
   res.redirect("/");
 })
 
+app.post("/logout", (req, res) => {
+  var username = req.body.username;
+  res.clearCookie("username", username);
+  res.redirect("/");
+})
+
 //json page
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);

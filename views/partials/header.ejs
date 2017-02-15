@@ -11,6 +11,9 @@
             <li>
             <% if (username) { %>
                 Welcome, <%= username %>
+                <form action="/logout" method="POST">
+                    <input type="submit" value="logout">
+                </form>
             <% } else { %>
                 <form action="/login" method="POST">
                     <input id="userID" type="text" name="username" placeholder="input username" style="width: 150px">
