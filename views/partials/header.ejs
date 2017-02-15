@@ -9,10 +9,14 @@
         </div>
         <ul class="nav navbar-nav">
             <li>
+            <% if (username) { %>
+                Welcome, <%= username %>
+            <% } else { %>
                 <form action="/login" method="POST">
                     <input id="userID" type="text" name="username" placeholder="input username" style="width: 150px">
                     <input type="submit" value="login">
                 </form>
+            <% } %>
             </li>
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>

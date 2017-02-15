@@ -33,23 +33,31 @@ app.listen(PORT, () => {
 
 //root directory, index
 app.get("/", (req, res) => {
-  res.render('pages/index');
+  let templateVars = {username: req.cookies["username"]
+                     };
+  res.render('pages/index', templateVars);
 });
 
 //about the page
 app.get("/about", (req, res) => {
-  res.render('pages/about');
+  let templateVars = {username: req.cookies["username"]
+                     };
+  res.render('pages/about', templateVars);
 });
 
 //list urls
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase,
+                      username: req.cookies["username"]
+                     };
   res.render("pages/urls_index", templateVars);
 });
 
 //create new url
 app.get("/urls/new", (req, res) => {
-  res.render("pages/urls_new");
+  let templateVars = {username: req.cookies["username"]
+                     };
+  res.render("pages/urls_new", templateVars);
 });
 
 //generate shortURL which post to /urls
@@ -65,7 +73,8 @@ app.get("/urls/:id", (req, res) => {
   //add in object for ejs to access. urlDatabase[req.params.id]
   //and not urlDatabase[shortURL] because shortURL does not hold the value
   let templateVars = { shortURL: req.params.id,
-                       longURL: urlDatabase[req.params.id]
+                       longURL: urlDatabase[req.params.id],
+                       username: req.cookies["username"]
                      };
   res.render("pages/urls_show", templateVars);
 });
@@ -97,7 +106,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/login", (req, res) => {
   var username = req.body.username;
-  res.cookie('username', username);
+  res.cookie("username", username);
   res.redirect("/");
 })
 
