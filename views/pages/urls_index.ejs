@@ -15,6 +15,7 @@
             <ul>
                 <% for (let urlDatabase in urls) { %>
                     <li><%= `${urlDatabase} - ${urls[urlDatabase]}` %>
+                        <a href="/urls/<%= urlDatabase %>"> EDIT </a>
                         <form method="POST" action="/urls/<%= urlDatabase%>/delete">
                             <input type="submit" value="delete">
                         </form>

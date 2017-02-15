@@ -39,11 +39,13 @@ app.get("/about", (req, res) => {
   res.render('pages/about');
 });
 
+//list urls
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("pages/urls_index", templateVars);
 });
 
+//create new url
 app.get("/urls/new", (req, res) => {
   res.render("pages/urls_new");
 });
@@ -51,12 +53,12 @@ app.get("/urls/new", (req, res) => {
 //generate shortURL which post to /urls
 //but redirect to /urls/"shortURL"
 app.post("/urls", (req, res) => {
-  console.log(generateRandomString(),req.body.longURL);  // debug statement to see POST parameters
   var shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect("/urls/" + shortURL);
 });
 
+//display current url, access to update
 app.get("/urls/:id", (req, res) => {
   //add in object for ejs to access. urlDatabase[req.params.id]
   //and not urlDatabase[shortURL] because shortURL does not hold the value
@@ -65,6 +67,14 @@ app.get("/urls/:id", (req, res) => {
                      };
   res.render("pages/urls_show", templateVars);
 });
+
+//update url's long url
+app.post("/urls/:id", (req, res) => {
+  let shortURL = req.params.id
+  let longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+  res.redirect("/urls");
+})
 
 app.post("/urls/:id/delete", (req, res) => {
   console.log("delete this url")
