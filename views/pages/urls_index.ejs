@@ -13,8 +13,12 @@
         <div class="jumbotron">
             <h1>List of URLs</h1>
             <ul>
-                <% for (urlDatabase in urls) { %>
-                    <li><%= `${urlDatabase} - ${urls[urlDatabase]}`  %></li>
+                <% for (let urlDatabase in urls) { %>
+                    <li><%= `${urlDatabase} - ${urls[urlDatabase]}` %>
+                        <form method="POST" action="/urls/<%= urlDatabase%>/delete">
+                            <input type="submit" value="delete">
+                        </form>
+                    </li>
                 <% }; %>
             </ul>
         </div>
