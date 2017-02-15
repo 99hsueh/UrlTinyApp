@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 function generateRandomString() {
   var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for( var i=0; i < 6; i++ )
         text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -34,6 +34,7 @@ app.get("/", (req, res) => {
   res.render('pages/index');
 });
 
+//about the page
 app.get("/about", (req, res) => {
   res.render('pages/about');
 });
@@ -47,9 +48,13 @@ app.get("/urls/new", (req, res) => {
   res.render("pages/urls_new");
 });
 
+//generate shortURL which post to /urls
+//but redirect to /urls/"shortURL"
 app.post("/urls", (req, res) => {
   console.log(generateRandomString(),req.body.longURL);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  var shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect("/urls/" + shortURL);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -61,7 +66,16 @@ app.get("/urls/:id", (req, res) => {
   res.render("pages/urls_show", templateVars);
 });
 
-//about the page
+app.get("/u/:shortURL", (req, res) => {
+  var shortURL = req.params.shortURL;
+  var longURL = urlDatabase[req.params.shortURL]
+  if (longURL.startsWith('http://' || 'https://')){
+    res.redirect(longURL);
+  } else {
+    res.redirect(`http://${longURL}`);
+  }
+});
+
 
 
 //json page
