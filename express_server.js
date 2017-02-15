@@ -95,7 +95,11 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
-
+app.post("/login", (req, res) => {
+  var username = req.body.username;
+  res.cookie('username', username);
+  res.redirect("/");
+})
 
 //json page
 app.get("/urls.json", (req, res) => {
