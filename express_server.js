@@ -135,16 +135,23 @@ app.post("/logout", (req, res) => {
 })
 
 app.post("/register", (req, res) => {
-    const newKey = generateRandomString();
+  if(!(req.body.password)){
+    res.status(400);
+    res.send("Your email/password is empty.");
+  } else if (!(req.body.email)) {
+    res.status(400);
+    res.send("Your email/password is empty.");
+  } else {
+const newKey = generateRandomString();
+
     users[newKey] = {
       user_id: newKey,
       email: req.body.email,
       password: req.body.password
     };
+    res.cookie(newKey, users[newKey].email)
+    res.redirect("/");
+  }
 
-    console.log(users);
-
-
- // }
-  res.redirect("/");
 })
+
