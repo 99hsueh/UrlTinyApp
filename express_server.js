@@ -1,6 +1,6 @@
 var express = require("express");
 var app = express();
-var PORT = process.env.PORT || 8080;
+var PORT = process.env.PORT || 3000;
 
 var users = {
   userRandomID1: {user_id: "userRandomID1", email: "myemail@gmail.com", password: "crackthispassword"},
@@ -38,41 +38,64 @@ app.listen(PORT, () => {
 
 //root directory, index
 app.get("/", (req, res) => {
-  let templateVars = {username: req.cookies["username"]
-                     };
-  res.render('pages/index', templateVars);
+  let newKey = req.cookies.name;
+  let users = {newKey:
+    {user_id: req.cookies.name,
+     email: req.cookies.email,
+     password: req.cookies.password
+    }
+  };
+  res.render('pages/index', users);
 });
 
 //about the page
 app.get("/about", (req, res) => {
-  let templateVars = {username: req.cookies["username"]
-                     };
-  res.render('pages/about', templateVars);
+  let newKey = req.cookies.name;
+  let users = {newKey:
+    {user_id: req.cookies.name,
+     email: req.cookies.email,
+     password: req.cookies.password
+    }
+  };
+  res.render('pages/about', users);
 });
 
 //list urls
 app.get("/urls", (req, res) => {
+  let newKey = req.cookies.name;
   let templateVars = { urls: urlDatabase,
-                      username: req.cookies["username"]
-                     };
+    newKey: {user_id: req.cookies.name,
+      email: req.cookies.email,
+      password: req.cookies.password
+    }
+  };
   res.render("pages/urls_index", templateVars);
 });
 
 //create new url
 app.get("/urls/new", (req, res) => {
-  let templateVars = {username: req.cookies["username"]
-                     };
-  res.render("pages/urls_new", templateVars);
+  let newKey = req.cookies.name;
+  let users = {newKey:
+    {user_id: req.cookies.name,
+     email: req.cookies.email,
+     password: req.cookies.password
+    }
+  };
+  res.render("pages/urls_new", users);
 });
 
 //display current url, access to update
 app.get("/urls/:id", (req, res) => {
   //add in object for ejs to access. urlDatabase[req.params.id]
   //and not urlDatabase[shortURL] because shortURL does not hold the value
+  let newKey = req.cookies.name;
   let templateVars = { shortURL: req.params.id,
-                       longURL: urlDatabase[req.params.id],
-                       username: req.cookies["username"]
-                     };
+    longURL: urlDatabase[req.params.id],
+    newKey:{user_id: req.cookies.name,
+      email: req.cookies.email,
+      password: req.cookies.password
+    }
+  };
   res.render("pages/urls_show", templateVars);
 });
 
@@ -87,11 +110,14 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  let templateVars = { username: req.cookies["username"],
-                       email: req.body.email,
-                       password: req.body.password
-                     };
-  res.render("pages/register", templateVars);
+  let newKey = req.cookies.name;
+  let users = {newKey:
+    {user_id: req.cookies.name,
+     email: req.cookies.email,
+     password: req.cookies.password
+    }
+  };
+  res.render("pages/register", users);
 })
 
 //json page
@@ -152,6 +178,6 @@ const newKey = generateRandomString();
     res.cookie(newKey, users[newKey].email)
     res.redirect("/");
   }
+  console.log(users);
 
 })
-
