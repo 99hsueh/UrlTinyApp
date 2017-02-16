@@ -2,6 +2,11 @@ var express = require("express");
 var app = express();
 var PORT = process.env.PORT || 8080;
 
+var users = {
+  userRandomID1: {user_id: "userRandomID1", email: "myemail@gmail.com", password: "crackthispassword"},
+  userRandomID2: {user_id: "userRandomID2", email: "example@gmail.com", password: "admin12345"}
+};
+
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -60,14 +65,6 @@ app.get("/urls/new", (req, res) => {
   res.render("pages/urls_new", templateVars);
 });
 
-//generate shortURL which post to /urls
-//but redirect to /urls/"shortURL"
-app.post("/urls", (req, res) => {
-  var shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
-  res.redirect("/urls/" + shortURL);
-});
-
 //display current url, access to update
 app.get("/urls/:id", (req, res) => {
   //add in object for ejs to access. urlDatabase[req.params.id]
@@ -77,6 +74,37 @@ app.get("/urls/:id", (req, res) => {
                        username: req.cookies["username"]
                      };
   res.render("pages/urls_show", templateVars);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  var shortURL = req.params.shortURL;
+  var longURL = urlDatabase[req.params.shortURL]
+  if (longURL.startsWith('http://' || 'https://')){
+    res.redirect(longURL);
+  } else {
+    res.redirect(`http://${longURL}`);
+  }
+});
+
+app.get("/register", (req, res) => {
+  let templateVars = { username: req.cookies["username"],
+                       email: req.body.email,
+                       password: req.body.password
+                     };
+  res.render("pages/register", templateVars);
+})
+
+//json page
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+
+//generate shortURL which post to /urls
+//but redirect to /urls/"shortURL"
+app.post("/urls", (req, res) => {
+  var shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect("/urls/" + shortURL);
 });
 
 //update url's long url
@@ -94,16 +122,6 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 })
 
-app.get("/u/:shortURL", (req, res) => {
-  var shortURL = req.params.shortURL;
-  var longURL = urlDatabase[req.params.shortURL]
-  if (longURL.startsWith('http://' || 'https://')){
-    res.redirect(longURL);
-  } else {
-    res.redirect(`http://${longURL}`);
-  }
-});
-
 app.post("/login", (req, res) => {
   var username = req.body.username;
   res.cookie("username", username);
@@ -116,7 +134,17 @@ app.post("/logout", (req, res) => {
   res.redirect("/");
 })
 
-//json page
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
+app.post("/register", (req, res) => {
+    const newKey = generateRandomString();
+    users[newKey] = {
+      user_id: newKey,
+      email: req.body.email,
+      password: req.body.password
+    };
+
+    console.log(users);
+
+
+ // }
+  res.redirect("/");
+})

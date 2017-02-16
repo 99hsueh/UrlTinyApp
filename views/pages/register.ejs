@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+    <header>
+        <% include ../partials/header %>
+    </header>
+
+    <main>
+        <div class="jumbotron">
+            <h1>Register</h1>
+                <form action="/register" method="POST">
+                    <input id="userID" type="email" name="email" placeholder="input email" style="width: 150px">
+                    <input id="userPassword" type="password" name="password" placeholder="input password" style="width: 150px">
+                    <input type="submit" value="Register">
+                </form>
+        </div>
+    </main>
+
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+
+</body>
+</html>
