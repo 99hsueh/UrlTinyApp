@@ -9,14 +9,15 @@
         </div>
         <ul class="nav navbar-nav">
             <li>
-            <% if (newKey.email) { %>
-                Welcome, <%= email %>
+            <% if (user) { %>
+                Welcome, <%= user.email %>
                 <form action="/logout" method="POST">
                     <input type="submit" value="logout">
                 </form>
             <% } else { %>
                 <form action="/login" method="POST">
-                    <input id="userID" type="text" name="username" placeholder="input username" style="width: 150px">
+                    <input id="email_field" type="email" name="email" placeholder="input email" style="width: 150px">
+                    <input id="userPassword" type="password" name="password" placeholder="input password" style="width: 150px">
                     <input type="submit" value="login">
                 </form>
             <% } %>

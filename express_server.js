@@ -38,63 +38,49 @@ app.listen(PORT, () => {
 
 //root directory, index
 app.get("/", (req, res) => {
-  let newKey = req.cookies.name;
-  let users = {newKey:
-    {user_id: req.cookies.name,
-     email: req.cookies.email,
-     password: req.cookies.password
-    }
-  };
-  res.render('pages/index', users);
+  let newKey = req.cookies.user_id;
+  console.log(newKey);
+  let templateVars = {user: users[newKey]}
+    // {user_id: newKey,
+    //  email: users[newKey].email,
+    //  password: users[newKey].password
+    // }
+  res.render('pages/index', templateVars);
 });
 
 //about the page
 app.get("/about", (req, res) => {
-  let newKey = req.cookies.name;
-  let users = {newKey:
-    {user_id: req.cookies.name,
-     email: req.cookies.email,
-     password: req.cookies.password
-    }
-  };
-  res.render('pages/about', users);
+  let newKey = req.cookies.user_id;
+  let templateVars = {user: users[newKey]};
+  res.render('pages/about', templateVars);
 });
 
 //list urls
 app.get("/urls", (req, res) => {
-  let newKey = req.cookies.name;
-  let templateVars = { urls: urlDatabase,
-    newKey: {user_id: req.cookies.name,
-      email: req.cookies.email,
-      password: req.cookies.password
-    }
+  let newKey = req.cookies.user_id;
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[newKey]
   };
   res.render("pages/urls_index", templateVars);
 });
 
 //create new url
 app.get("/urls/new", (req, res) => {
-  let newKey = req.cookies.name;
-  let users = {newKey:
-    {user_id: req.cookies.name,
-     email: req.cookies.email,
-     password: req.cookies.password
-    }
-  };
-  res.render("pages/urls_new", users);
+  let newKey = req.cookies.user_id;
+  let templateVars = {user: users[newKey]};
+  res.render("pages/urls_new", templateVars);
 });
 
 //display current url, access to update
 app.get("/urls/:id", (req, res) => {
   //add in object for ejs to access. urlDatabase[req.params.id]
   //and not urlDatabase[shortURL] because shortURL does not hold the value
-  let newKey = req.cookies.name;
-  let templateVars = { shortURL: req.params.id,
+  let newKey = req.cookies.user_id;
+  let templateVars = {
+    shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    newKey:{user_id: req.cookies.name,
-      email: req.cookies.email,
-      password: req.cookies.password
-    }
+    user: users[newKey]
   };
   res.render("pages/urls_show", templateVars);
 });
@@ -110,14 +96,9 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  let newKey = req.cookies.name;
-  let users = {newKey:
-    {user_id: req.cookies.name,
-     email: req.cookies.email,
-     password: req.cookies.password
-    }
-  };
-  res.render("pages/register", users);
+  let newKey = req.cookies.user_id;
+  let templateVars = {user: users[newKey]}
+  res.render("pages/register", templateVars);
 })
 
 //json page
@@ -149,33 +130,43 @@ app.post("/urls/:id/delete", (req, res) => {
 })
 
 app.post("/login", (req, res) => {
-  var username = req.body.username;
-  res.cookie("username", username);
-  res.redirect("/");
-})
+  let user;
+  for (let IdKey in users) {
+    if (users[IdKey].email === req.body.email) {
+      user = users[IdKey];
+      break;
+    }
+  }
+  if (user){
+    if (user.password === req.body.password){
+      res.cookie("user_id", user.user_id);
+      res.redirect('/');
+    }
+  } else{
+  res.status(401).send('Bad credentials');
+  }
+});
+
+
 
 app.post("/logout", (req, res) => {
-  var username = req.body.username;
-  res.clearCookie("username", username);
+  res.clearCookie("user_id");
   res.redirect("/");
 })
 
 app.post("/register", (req, res) => {
   if(!(req.body.password)){
-    res.status(400);
-    res.send("Your email/password is empty.");
+    res.status(400).send("Your email/password is empty.");
   } else if (!(req.body.email)) {
-    res.status(400);
-    res.send("Your email/password is empty.");
+    res.status(400).send("Your email/password is empty.");
   } else {
-const newKey = generateRandomString();
-
+    const newKey = generateRandomString();
     users[newKey] = {
       user_id: newKey,
       email: req.body.email,
       password: req.body.password
     };
-    res.cookie(newKey, users[newKey].email)
+    res.cookie("user_id", newKey)
     res.redirect("/");
   }
   console.log(users);
