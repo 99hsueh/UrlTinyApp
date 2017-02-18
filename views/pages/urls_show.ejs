@@ -14,7 +14,7 @@
             <h1>List URL</h1>
             <ul>
                     <p>
-                        <%= shortURL %>
+                        <%= shortURL %> - <a href="/u/<%= shortURL %>"><%= longURL%></a>
                         <form action="/urls/<%= shortURL %>" method="POST">
                             <input id="longURL" type="text" name="longURL" placeholder="<%= longURL %>" style="width: 300px">
                             <input type="submit" value="Update">

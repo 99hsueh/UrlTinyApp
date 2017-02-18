@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const bcrypt = require("bcrypt");
+
 
 let users = {
   userRandomID1: {user_id: "userRandomID1", email: "myemail@gmail.com", password: "crackthispassword"},
@@ -28,7 +30,7 @@ function generateRandomString() {
 }
 
 //set the view engine to ejs
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 
 //listening to port
 app.listen(PORT, () => {
@@ -134,9 +136,13 @@ app.post("/urls/:id", (req, res) => {
   let newKey = req.cookies.user_id;
   let shortURL = req.params.id
   let longURL = req.body.longURL;
+  if(shortURL.user_id === newKey){
   urlDatabase[shortURL].longURL = longURL;
-  res.redirect("/urls");
-})
+    res.redirect("/urls");
+  } else {
+    res.status(401).send('You are not the owner of this URL');
+  }
+});
 
 app.post("/urls/:id/delete", (req, res) => {
   console.log("delete this url")
@@ -154,17 +160,16 @@ app.post("/login", (req, res) => {
     }
   }
   if (user){
-    if (user.password === req.body.password){
+    if (bcrypt.compareSync(req.body.password, user.password)){
       res.cookie("user_id", user.user_id);
       res.redirect('/');
+      console.log(users);
       return;
     }
   } else{
   res.status(401).send('Bad credentials');
   }
 });
-
-
 
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
@@ -181,7 +186,7 @@ app.post("/register", (req, res) => {
     users[newKey] = {
       user_id: newKey,
       email: req.body.email,
-      password: req.body.password
+      password: bcrypt.hashSync(req.body.password, 10)
     };
     res.cookie("user_id", newKey)
     res.redirect("/");
