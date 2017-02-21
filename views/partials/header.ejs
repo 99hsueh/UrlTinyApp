@@ -8,26 +8,26 @@
             </a>
         </div>
         <ul class="nav navbar-nav">
+        <% if (user) { %>
             <li>
-            <% if (user) { %>
                 Welcome, <%= user.email %>
                 <form action="/logout" method="POST">
                     <input type="submit" value="logout">
                 </form>
-            <% } else { %>
+            </li>
+            <li><a href="/urls">List of URLs</a></li>
+        <% } else { %>
+            <li>
                 <form action="/login" method="POST">
                     <input id="email_field" type="email" name="email" placeholder="input email" style="width: 150px">
                     <input id="userPassword" type="password" name="password" placeholder="input password" style="width: 150px">
                     <input type="submit" value="login">
                 </form>
-            <% } %>
             </li>
             <li><a href="/register"> Register!</a><li>
+            <% } %>
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
-            <li><a href="/urls">List of URLs</a></li>
-            <li><a href="/urls/new">Create shorten URL</a></li>
-
         </ul>
 
     </div>

@@ -13,14 +13,17 @@
         <div class="jumbotron">
             <h1>List of URLs</h1>
             <ul>
+            <% if (user) { %>
+                <li><a href="/urls/new">Create shorten URL</a></li>
                 <% for (let urlDatabase in urls) { %>
                     <li><%= `${urls[urlDatabase].id} - ${urls[urlDatabase].longURL}` %>
                         <a href="/urls/<%= urls[urlDatabase].id %>"> EDIT </a>
-                        <form method="POST" action="/urls/<%= urlDatabase%>/delete">
+                        <form method="POST" action="/urls/<%= urls[urlDatabase].id%>/delete">
                             <input type="submit" value="delete">
                         </form>
                     </li>
                 <% }; %>
+            <% }; %>
             </ul>
         </div>
     </main>

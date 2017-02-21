@@ -111,33 +111,47 @@ app.get("/urls/:id", (req, res) => {
   //add in object for ejs to access. urlDatabase[req.params.id]
   //and not urlDatabase[shortURL] because shortURL does not hold the value
   let newKey = req.session.user_id;
-  let templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL,
-    user: users[newKey],
-    urls: urlDatabase
-  };
-  if(req.params.id != urlDatabase[req.params.id].id){
-    res.status(404).render('pages/error404', templateVars);
-  }
-  else if(!users[newKey]){
-    res.status(401).render('pages/error401', templateVars);
-  }
-  else if(newKey != urlDatabase[req.params.id].user_id){
-    res.status(403).render('pages/error403', templateVars);
-  }
-  else {
-  res.render("pages/urls_show", templateVars);
+    if(urlDatabase[req.params.id]){
+    let templateVars = {
+      shortURL: req.params.id,
+      longURL: urlDatabase[req.params.id].longURL,
+      user: users[newKey],
+      urls: urlDatabase
+    };
+    if(req.params.id === undefined){
+      res.status(404).render('pages/error404', templateVars);
+    }
+    if(req.params.id != urlDatabase[req.params.id].id){
+      res.status(404).render('pages/error404', templateVars);
+    }
+    else if(!users[newKey]){
+      res.status(401).render('pages/error401', templateVars);
+    }
+    else if(newKey != urlDatabase[req.params.id].user_id){
+      res.status(403).render('pages/error403', templateVars);
+    } else {
+      res.render("pages/urls_show", templateVars);
+    }
+  } else {
+      let newKey = req.session.user_id;
+      let templateVars = {user: users[newKey]};
+      res.render('pages/error404', templateVars);
   }
 });
 
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[req.params.shortURL].longURL
-  if (longURL.startsWith('http://' || 'https://')){
-    res.redirect(longURL);
+  if(urlDatabase[shortURL]){
+    let longURL = urlDatabase[shortURL].longURL
+    if(longURL.startsWith('http://' || 'https://')){
+      res.redirect(longURL);
+    } else {
+      res.redirect(`http://${longURL}`);
+    }
   } else {
-    res.redirect(`http://${longURL}`);
+    let newKey = req.session.user_id;
+    let templateVars = {user: users[newKey]};
+    res.render('pages/error404', templateVars);
   }
 });
 
@@ -164,13 +178,17 @@ app.post("/urls", (req, res) => {
 //update url's long url
 app.post("/urls/:id", (req, res) => {
   let newKey = req.session.user_id;
-  let shortURL = req.params.id
-  let longURL = req.body.longURL;
-  if(shortURL.user_id === newKey){
-  urlDatabase[shortURL].longURL = longURL;
+  let shortURL = req.params.id;
+  let templateVars= {
+    user: users[newKey],
+    urls: urlDatabase,
+    longURL: urlDatabase[shortURL].longURL
+  }
+  if(urlDatabase[shortURL].user_id === newKey){
+  urlDatabase[shortURL].longURL = req.body.longURL;
     res.redirect("/urls");
   } else {
-    res.status(401).send('You are not the owner of this URL');
+    res.status(401).render('pages/error401', templateVars);
   }
 });
 
